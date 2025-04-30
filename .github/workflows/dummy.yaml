@@ -1,0 +1,19 @@
+name: "Test workflow targeting main branch"
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches: # this workflow should only run for PRs closed which are targeted (=merging) to the below branches 
+      - master
+      - main
+
+jobs:
+  only-on-main-please:
+    name: only-on-main-please
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Hello world
+        run: echo "Hello world"
