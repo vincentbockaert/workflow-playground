@@ -2,7 +2,7 @@ name: Matrix Example
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Print environment
         run: |
-          echo "coin_toss=$((RANDOM % 2 == 0))" | tee >> $GITHUB_OUTPUT
+          coin_toss=$((RANDOM % 2 == 0)) && echo "coin_toss=$coin_toss" | tee -a $GITHUB_OUTPUT
           echo "Running on ${{ matrix.os }} with Node.js ${{ matrix.node-version }}"
   
   level_two:
@@ -31,7 +31,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
-        if: ${{ needs.build.outputs.coin_toss == 'true' }}
+        if: ${{ needs.build.outputs.coin_toss == '0' }}
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
