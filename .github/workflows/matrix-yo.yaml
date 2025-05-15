@@ -1,0 +1,42 @@
+name: Matrix Example
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14, 16, 18] # in our case these are not static, the list can be smaller/bigger
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Print environment
+        run: |
+          echo "coin_toss=$((RANDOM % 2 == 0))" | tee >> $GITHUB_OUTPUT
+          echo "Running on ${{ matrix.os }} with Node.js ${{ matrix.node-version }}"
+  
+  level_two:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        node-version: [14, 16, 18]
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ needs.build.outputs.coin_toss == 'true' }}
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          
+      - name: Print environment
+        run: |
+          echo "Running on ${{ matrix.os }} with Node.js ${{ matrix.node-version }}"
